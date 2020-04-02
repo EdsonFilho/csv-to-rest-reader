@@ -1,9 +1,7 @@
 package br.com.eacf.app.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.List;
 
 @Entity
 public class Movie {
@@ -13,24 +11,35 @@ public class Movie {
     private Long  id;
     private String year;
     private String title;
-    private String studios;
-    private String producer;
-    private String winner;
+    private boolean winner;
+
+    @ManyToMany(cascade = { CascadeType.ALL })
+    @JoinTable(
+            name = "filme_ator",
+            joinColumns = { @JoinColumn(name = "filme_id") },
+            inverseJoinColumns = { @JoinColumn(name = "ator_id") },
+            uniqueConstraints = @UniqueConstraint(columnNames = { "filme_id", "ator_id" }, name = "permissao_filme_ator_key")
+    )
+    private List<Studio> studios;
+
+    @ManyToMany(cascade = { CascadeType.ALL })
+    @JoinTable(
+            name = "filme_producer",
+            joinColumns = { @JoinColumn(name = "filme_id") },
+            inverseJoinColumns = { @JoinColumn(name = "producer_id") },
+            uniqueConstraints = @UniqueConstraint(columnNames = { "filme_id", "producer_id" }, name = "permissao_filme_producer_key")
+    )
+    private List<Producer> producers;
 
     protected Movie() {}
 
-    public Movie(Long id, String year, String title, String studios, String producer, String winner) {
+    public Movie(Long id, String year, String title, List<Studio> studios, List<Producer> producers, boolean winner) {
         this.id = id;
         this.year = year;
         this.title = title;
         this.studios = studios;
-        this.producer = producer;
+        this.producers = producers;
         this.winner = winner;
-    }
-
-    @Override
-    public String toString() {
-        return String.format("Customer[id=%d, year='%s', title='%s', studios='%s', producer='%s', winner='%s']", id, year, title, studios, producer, winner);
     }
 
     public Long getId() {
@@ -57,27 +66,37 @@ public class Movie {
         this.title = title;
     }
 
-    public String getStudios() {
-        return studios;
-    }
-
-    public void setStudios(String studios) {
-        this.studios = studios;
-    }
-
-    public String getProducer() {
-        return producer;
-    }
-
-    public void setProducer(String producer) {
-        this.producer = producer;
-    }
-
-    public String getWinner() {
+    public boolean isWinner() {
         return winner;
     }
 
-    public void setWinner(String winner) {
+    public void setWinner(boolean winner) {
         this.winner = winner;
+    }
+
+    public List<Studio> getStudios() {
+        return studios;
+    }
+
+    public void setStudios(List<Studio> studios) {
+        this.studios = studios;
+    }
+
+    public List<Producer> getProducers() {
+        return producers;
+    }
+
+    public void setProducers(List<Producer> producers) {
+        this.producers = producers;
+    }
+
+    @Override
+    public String toString() {
+        return "Movie{" +
+                "id=" + id +
+                ", year='" + year + '\'' +
+                ", title='" + title + '\'' +
+                ", winner=" + winner +
+                '}';
     }
 }

@@ -1,61 +1,105 @@
 package br.com.eacf.app.csv;
 
+import br.com.eacf.app.entity.Movie;
+import br.com.eacf.app.entity.Producer;
+import br.com.eacf.app.entity.Studio;
+import com.opencsv.CSVParser;
+import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Component
 public class Reader {
 
-    public void readCSV(){
+    private static final Logger log = LoggerFactory.getLogger(Reader.class);
+
+    public List<Movie> readCSV(){
         BufferedReader fileReader = null;
         CSVReader csvReader = null;
+        List<Movie> movies = new ArrayList<>();
 
         try {
-            File f = new File("customer.csv");
-
-            System.out.println(f.getPath());
-
-            fileReader = new BufferedReader(new FileReader(f));
-            csvReader = new CSVReader(fileReader);
+            log.info("Locating file movielist.csv");
+            fileReader = new BufferedReader(new FileReader("movielist.csv"));
+            CSVParser parser = new CSVParserBuilder().withSeparator(';').build();
+            csvReader = new CSVReaderBuilder(fileReader).withCSVParser(parser).build();
             String[] record;
 
-            System.out.println("--- Read line by line ---");
+            log.info("Reading file movielist.csv");
             csvReader.readNext(); // skip Header
             while ((record = csvReader.readNext()) != null) {
-                System.out.println(record[0] + " | " + record[1] + " | " + record[2] + " | " + record[3]);
+                movies.add(this.parseMovie(record));
             }
-
+            log.info("movielist.csv read successfully");
             csvReader.close();
 
-            // -------------------------------------------
-            System.out.println("\n--- Read all at once ---");
-
-            fileReader = new BufferedReader(new FileReader("customer.csv"));
-            csvReader = new CSVReaderBuilder(fileReader).withSkipLines(1).build();
-            List<String[]> records = csvReader.readAll();
-
-            for (String[] _record : records) {
-                System.out.println(_record[0] + " | " + _record[1] + " | " + _record[2] + " | " + _record[3]);
-            }
         } catch (Exception e) {
-            System.out.println("Reading CSV Error!");
-            e.printStackTrace();
+            log.error("Reading CSV Error!", e);
+            //Exiting application when unable to read csv file
+            System.exit(1);
         } finally {
             try {
                 fileReader.close();
                 csvReader.close();
             } catch (IOException e) {
-                System.out.println("Closing fileReader/csvParser Error!");
-                e.printStackTrace();
+                log.error("Error closing fileReader/csvParser!", e);
             }
         }
-
+        log.info("Reading file movielist.csv");
+        return movies;
     }
+
+    // Methos responsible for create the Movie object with the data read from the csv file
+    private Movie parseMovie(String[] record){
+        return new Movie(null, record[0], record[1], this.parseStudios(record[2]), this.parseProducers(record[3]), this.parseBooleanAttribute(record[4]));
+    }
+
+    // Method responsible for removing the , and and word and creating a list with the values
+    private List<Producer> parseProducers(String record){
+        List<Producer> ls = new ArrayList<>();
+        String[] values = record.split(", ");
+        Arrays.stream(values).forEach((value) -> {
+            // Do a new sprit if the string containd the word "and"
+            if(value.contains(" and ")){
+                String[] subValues = value.split(" and ");
+                ls.add(new Producer(subValues[0]));
+                ls.add(new Producer(subValues[1]));
+            } else {
+                ls.add(new Producer(value));
+            }
+        });
+        return ls;
+    }
+
+    // Method responsible for removing the , and and word and creating a list with the values
+    private List<Studio> parseStudios(String record){
+        List<Studio> ls = new ArrayList<>();
+        String[] values = record.split(", ");
+        Arrays.stream(values).forEach((value) -> {
+            // Do a new sprit if the string containd the word "and"
+            if(value.contains(" and ")){
+                String[] subValues = value.split(" and ");
+                ls.add(new Studio(subValues[0]));
+                ls.add(new Studio(subValues[1]));
+            } else {
+                ls.add(new Studio(value));
+            }
+        });
+        return ls;
+    }
+
+    private boolean parseBooleanAttribute(String record){
+        return  "yes".equalsIgnoreCase(record) ? true : false;
+    }
+
 }
