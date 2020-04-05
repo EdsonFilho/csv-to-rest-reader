@@ -1,9 +1,7 @@
 package br.com.eacf.app.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.List;
 
 @Entity
 public class Producer {
@@ -13,6 +11,9 @@ public class Producer {
     private Long id;
 
     private String name;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    private List<Movie> movies;
 
     protected Producer(){
     }
@@ -35,6 +36,14 @@ public class Producer {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public List<Movie> getMovies() {
+        return movies;
+    }
+
+    public void setMovies(List<Movie> movies) {
+        this.movies = movies;
     }
 
     @Override

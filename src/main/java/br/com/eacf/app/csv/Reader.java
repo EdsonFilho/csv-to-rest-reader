@@ -3,17 +3,14 @@ package br.com.eacf.app.csv;
 import br.com.eacf.app.entity.Movie;
 import br.com.eacf.app.entity.Producer;
 import br.com.eacf.app.entity.Studio;
-import com.opencsv.CSVParser;
-import com.opencsv.CSVParserBuilder;
-import com.opencsv.CSVReader;
-import com.opencsv.CSVReaderBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -24,44 +21,30 @@ public class Reader {
     private static final Logger log = LoggerFactory.getLogger(Reader.class);
 
     public List<Movie> readCSV(){
-        BufferedReader fileReader = null;
-        CSVReader csvReader = null;
         List<Movie> movies = new ArrayList<>();
-
+        File csvFile = new File("movielist.csv");
         try {
-            log.info("Locating file movielist.csv");
-            fileReader = new BufferedReader(new FileReader("movielist.csv"));
-            CSVParser parser = new CSVParserBuilder().withSeparator(';').build();
-            csvReader = new CSVReaderBuilder(fileReader).withCSVParser(parser).build();
-            String[] record;
+            int recordSize = 5;
+            Files.readAllLines(csvFile.toPath(), StandardCharsets.UTF_8).stream().skip(1).forEach(line -> {
+                List<String> record = new ArrayList<>(recordSize);
+                record.addAll(Arrays.asList(line.split(";")));
 
-            log.info("Reading file movielist.csv");
-            csvReader.readNext(); // skip Header
-            while ((record = csvReader.readNext()) != null) {
+                while(record.size() < recordSize){ record.add(""); } //workaround 4 < 5 to avoid indexoutofbounds...
+
                 movies.add(this.parseMovie(record));
-            }
-            log.info("movielist.csv read successfully");
-            csvReader.close();
-
-        } catch (Exception e) {
+            });
+        } catch (IOException e) {
             log.error("Reading CSV Error!", e);
-            //Exiting application when unable to read csv file
-            System.exit(1);
-        } finally {
-            try {
-                fileReader.close();
-                csvReader.close();
-            } catch (IOException e) {
-                log.error("Error closing fileReader/csvParser!", e);
-            }
         }
-        log.info("Reading file movielist.csv");
+
+        log.info("movielist.csv read successfully");
+
         return movies;
     }
 
-    // Methos responsible for create the Movie object with the data read from the csv file
-    private Movie parseMovie(String[] record){
-        return new Movie(null, record[0], record[1], this.parseStudios(record[2]), this.parseProducers(record[3]), this.parseBooleanAttribute(record[4]));
+    // Method responsible for create the Movie object with the data read from the csv file
+    private Movie parseMovie(List<String> record){
+        return new Movie(null, record.get(0), record.get(1), this.parseStudios(record.get(2)), this.parseProducers(record.get(3)), this.parseBooleanAttribute(record.get(4)));
     }
 
     // Method responsible for removing the , and and word and creating a list with the values

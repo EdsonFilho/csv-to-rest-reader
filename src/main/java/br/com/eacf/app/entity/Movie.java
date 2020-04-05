@@ -13,22 +13,10 @@ public class Movie {
     private String title;
     private boolean winner;
 
-    @ManyToMany(cascade = { CascadeType.ALL })
-    @JoinTable(
-            name = "filme_ator",
-            joinColumns = { @JoinColumn(name = "filme_id") },
-            inverseJoinColumns = { @JoinColumn(name = "ator_id") },
-            uniqueConstraints = @UniqueConstraint(columnNames = { "filme_id", "ator_id" }, name = "permissao_filme_ator_key")
-    )
+    @ManyToMany
     private List<Studio> studios;
 
-    @ManyToMany(cascade = { CascadeType.ALL })
-    @JoinTable(
-            name = "filme_producer",
-            joinColumns = { @JoinColumn(name = "filme_id") },
-            inverseJoinColumns = { @JoinColumn(name = "producer_id") },
-            uniqueConstraints = @UniqueConstraint(columnNames = { "filme_id", "producer_id" }, name = "permissao_filme_producer_key")
-    )
+    @ManyToMany
     private List<Producer> producers;
 
     protected Movie() {}

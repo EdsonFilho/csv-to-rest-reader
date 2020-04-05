@@ -40,6 +40,7 @@ public class MovieService {
             List<Producer> ls = this.producerRepository.findByName(producer.getName());
             if(ls.isEmpty()){
                 persistedProducers.add(this.producerRepository.save(producer));
+//                persistedProducers.add(producer);
             } else {
                 persistedProducers.addAll(ls);
             }
@@ -50,6 +51,7 @@ public class MovieService {
             List<Studio> ls = this.studioRepository.findByName(studio.getName());
             if(ls.isEmpty()){
                 persistedStudios.add(this.studioRepository.save(studio));
+//                persistedStudios.add(studio);
             } else {
                 persistedStudios.addAll(ls);
             }
