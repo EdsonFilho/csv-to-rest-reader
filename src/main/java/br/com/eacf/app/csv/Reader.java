@@ -1,8 +1,6 @@
 package br.com.eacf.app.csv;
 
 import br.com.eacf.app.entity.Movie;
-import br.com.eacf.app.entity.Producer;
-import br.com.eacf.app.entity.Studio;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -44,38 +42,21 @@ public class Reader {
 
     // Method responsible for create the Movie object with the data read from the csv file
     private Movie parseMovie(List<String> record){
-        return new Movie(null, record.get(0), record.get(1), this.parseStudios(record.get(2)), this.parseProducers(record.get(3)), this.parseBooleanAttribute(record.get(4)));
+        return new Movie(null, Integer.parseInt(record.get(0)), record.get(1), this.parseString(record.get(2)), this.parseString(record.get(3)), this.parseBooleanAttribute(record.get(4)));
     }
 
     // Method responsible for removing the , and and word and creating a list with the values
-    private List<Producer> parseProducers(String record){
-        List<Producer> ls = new ArrayList<>();
+    private List<String> parseString(String record){
+        List<String> ls = new ArrayList<>();
         String[] values = record.split(", ");
         Arrays.stream(values).forEach((value) -> {
             // Do a new sprit if the string containd the word "and"
             if(value.contains(" and ")){
                 String[] subValues = value.split(" and ");
-                ls.add(new Producer(subValues[0]));
-                ls.add(new Producer(subValues[1]));
+                ls.add(subValues[0]);
+                ls.add(subValues[1]);
             } else {
-                ls.add(new Producer(value));
-            }
-        });
-        return ls;
-    }
-
-    // Method responsible for removing the , and and word and creating a list with the values
-    private List<Studio> parseStudios(String record){
-        List<Studio> ls = new ArrayList<>();
-        String[] values = record.split(", ");
-        Arrays.stream(values).forEach((value) -> {
-            // Do a new sprit if the string containd the word "and"
-            if(value.contains(" and ")){
-                String[] subValues = value.split(" and ");
-                ls.add(new Studio(subValues[0]));
-                ls.add(new Studio(subValues[1]));
-            } else {
-                ls.add(new Studio(value));
+                ls.add(value);
             }
         });
         return ls;

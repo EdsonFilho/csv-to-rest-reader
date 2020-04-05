@@ -3,6 +3,7 @@ package br.com.eacf.app.endpoint;
 import br.com.eacf.app.entity.Movie;
 import br.com.eacf.app.entity.ProducerInterval;
 import br.com.eacf.app.service.MovieService;
+import br.com.eacf.app.service.ProducerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,17 +14,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("producer")
 public class ProducerController {
 
-    private MovieService service;
+    private ProducerService service;
 
     @Autowired
-    public ProducerController(MovieService service){
+    public ProducerController(ProducerService service){
         this.service = service;
     }
 
-    @GetMapping("/intervals/")
-    public ResponseEntity<Iterable<ProducerInterval>> findAll(){
-        // TODO
-        return ResponseEntity.ok(null);
+    @GetMapping("/winners/")
+    public ResponseEntity<ProducerInterval> findAll(){
+        return ResponseEntity.ok(service.getProducerIntervals());
     }
 
 }

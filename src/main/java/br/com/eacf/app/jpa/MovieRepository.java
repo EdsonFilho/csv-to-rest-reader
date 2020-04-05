@@ -10,4 +10,6 @@ public interface MovieRepository extends CrudRepository<Movie, Long> {
 
     List<Movie> findByTitle(String title);
 
+    List<Movie> findByWinner(Boolean winner);
+
 }

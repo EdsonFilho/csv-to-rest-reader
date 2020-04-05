@@ -9,19 +9,19 @@ public class Movie {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
     private Long  id;
-    private String year;
+    private Integer year;
     private String title;
     private boolean winner;
 
-    @ManyToMany
-    private List<Studio> studios;
+    @ElementCollection
+    private List<String> studios;
 
-    @ManyToMany
-    private List<Producer> producers;
+    @ElementCollection
+    private List<String> producers;
 
     protected Movie() {}
 
-    public Movie(Long id, String year, String title, List<Studio> studios, List<Producer> producers, boolean winner) {
+    public Movie(Long id, Integer year, String title, List<String> studios, List<String> producers, boolean winner) {
         this.id = id;
         this.year = year;
         this.title = title;
@@ -38,11 +38,11 @@ public class Movie {
         this.id = id;
     }
 
-    public String getYear() {
+    public Integer getYear() {
         return year;
     }
 
-    public void setYear(String year) {
+    public void setYear(Integer year) {
         this.year = year;
     }
 
@@ -62,19 +62,19 @@ public class Movie {
         this.winner = winner;
     }
 
-    public List<Studio> getStudios() {
+    public List<String> getStudios() {
         return studios;
     }
 
-    public void setStudios(List<Studio> studios) {
+    public void setStudios(List<String> studios) {
         this.studios = studios;
     }
 
-    public List<Producer> getProducers() {
+    public List<String> getProducers() {
         return producers;
     }
 
-    public void setProducers(List<Producer> producers) {
+    public void setProducers(List<String> producers) {
         this.producers = producers;
     }
 
@@ -85,6 +85,8 @@ public class Movie {
                 ", year='" + year + '\'' +
                 ", title='" + title + '\'' +
                 ", winner=" + winner +
+                ", studios=" + studios +
+                ", producers=" + producers +
                 '}';
     }
 }
