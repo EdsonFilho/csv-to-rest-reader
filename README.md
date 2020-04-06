@@ -26,12 +26,12 @@ The application will read the file CSV located on the root directory called movi
 This data will become available on the address http://localhost:8080 through a REST Api.
 
 ## Resources
-####Movie
+###Movie
 The movies can be accessed calling this endPoint:
  
 <code>http://localhost:8080/movie/</code>
 
-####Producers
+###Producers
 The producers can be accessed calling this endPoint:
  
 <code>http://localhost:8080/producers/</code>
