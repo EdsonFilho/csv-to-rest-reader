@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>br.com.eacf</groupId>
-	<artifactId>app</artifactId>
+	<artifactId>csv-to-rest-reader</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>app</name>
 	<description>Demo project for Spring Boot</description>

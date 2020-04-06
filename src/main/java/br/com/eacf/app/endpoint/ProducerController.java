@@ -19,7 +19,7 @@ public class ProducerController {
         this.service = service;
     }
 
-    @GetMapping("/winners/")
+    @GetMapping("/")
     public ResponseEntity<ProducerInterval> findAll(){
         return ResponseEntity.ok(service.getProducerIntervals());
     }
