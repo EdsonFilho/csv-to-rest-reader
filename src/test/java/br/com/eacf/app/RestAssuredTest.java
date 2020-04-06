@@ -55,7 +55,7 @@ public class RestAssuredTest {
         given()
                 .port(port)
                 .when()
-                .get("/producer/winners/")
+                .get("/producer/")
                 .then()
                 .statusCode(200)
                 .body("min[0].producer", Matchers.equalTo("Joel Silver"));
@@ -66,7 +66,7 @@ public class RestAssuredTest {
         given()
                 .port(port)
                 .when()
-                .get("/producer/winners/")
+                .get("/producer/")
                 .then()
                 .statusCode(200)
                 .body("min.size()", Matchers.equalTo(1));
