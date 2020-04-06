@@ -1,8 +1,6 @@
 package br.com.eacf.app.endpoint;
 
-import br.com.eacf.app.entity.Movie;
 import br.com.eacf.app.entity.ProducerInterval;
-import br.com.eacf.app.service.MovieService;
 import br.com.eacf.app.service.ProducerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
