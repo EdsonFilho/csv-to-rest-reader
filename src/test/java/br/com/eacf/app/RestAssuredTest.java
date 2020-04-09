@@ -3,6 +3,7 @@ package br.com.eacf.app;
 import io.restassured.http.ContentType;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.runner.RunWith;
@@ -15,7 +16,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment= SpringBootTest.WebEnvironment.RANDOM_PORT)
-@TestMethodOrder(MethodOrderer.Alphanumeric.class)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class RestAssuredTest {
 
     @LocalServerPort
@@ -26,6 +27,7 @@ public class RestAssuredTest {
      * Verifies if the
      */
     @Test
+    @Order(0)
     public void testMovieListSize() {
 
         given()
@@ -39,6 +41,7 @@ public class RestAssuredTest {
     }
 
     @Test
+    @Order(1)
     public void testMovieNameById() {
         given()
                 .port(port)
@@ -51,6 +54,7 @@ public class RestAssuredTest {
     }
 
     @Test
+    @Order(2)
     public void testCorrectWinnerWithMin() {
         given()
                 .port(port)
@@ -62,6 +66,7 @@ public class RestAssuredTest {
     }
 
     @Test
+    @Order(3)
     public void testCorrectWinnerWithMax() {
         given()
                 .port(port)
@@ -73,17 +78,17 @@ public class RestAssuredTest {
     }
 
     @Test
-    public void testSaveNewMovieAndCheckId() {
+    @Order(4)
+    public void testSaveNewMovie() {
         String requestBody = "{\n" +
-                "        \"year\": 2000,\n" +
-                "        \"title\": \"Added Movie\",\n" +
-                "        \"winner\": false,\n" +
+                "        \"year\": 2064,\n" +
+                "        \"title\": \"Test\",\n" +
+                "        \"winner\": true,\n" +
                 "        \"studios\": [\n" +
-                "            \"Added Productions\",\n" +
-                "            \"Added Artists\"\n" +
+                "            \"Test\"\n" +
                 "        ],\n" +
                 "        \"producers\": [\n" +
-                "            \"Added Producer\"\n" +
+                "            \"Matthew Vaughn\"\n" +
                 "        ]\n" +
                 "    }";
 
@@ -97,8 +102,27 @@ public class RestAssuredTest {
                 .assertThat()
                 .statusCode(200)
                 .body("id", Matchers.equalTo(197))
-                .body("title", Matchers.equalTo("Added Movie"))
-                .body("studios.size()", Matchers.equalTo(2));
+                .body("year", Matchers.equalTo(2064))
+                .body("title", Matchers.equalTo("Test"))
+                .body("studios[0]", Matchers.equalTo("Test"))
+                .body("producers[0]", Matchers.equalTo("Matthew Vaughn"));
+
+    }
+
+    @Test
+    @Order(5)
+    public void checkNewMaxProducerWithNewRegistry() {
+
+        given()
+                .port(port)
+                .when()
+                .get("/producer/")
+                .then()
+                .statusCode(200)
+                .body("max[0].producer", Matchers.equalTo("Matthew Vaughn"))
+                .body("max[0].interval", Matchers.equalTo(49))
+                .body("max[0].previousWin", Matchers.equalTo(2015))
+                .body("max[0].followingWin", Matchers.equalTo(2064));
 
     }
 }
